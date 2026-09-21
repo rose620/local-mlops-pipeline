@@ -1,0 +1,26 @@
+# Python environment and caching
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+
+# Virtual Environments
+venv/
+env/
+.venv/
+
+# Prefect local tracking
+.prefect/
+
+# Data and Models (Keep your repo light)
+data/
+*.pkl
+*.joblib
+
+# OS Specific junk
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.ipynb_checkpoints/
