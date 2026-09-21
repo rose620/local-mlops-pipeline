@@ -1,0 +1,53 @@
+name: MLOps CI Pipeline
+
+# Trigger workflow every time code pushed to main branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Pull down repository code onto GitHub's cloud runner
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Set up clean Python 3.11 engine in the cloud
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    # 3. Cache packages so the workflow runs fast in future
+    - name: Cache Pip Dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    # 4. Install exact dependencies in cloud environment
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f model_api/requirements.txt ]; then pip install -r model_api/requirements.txt; fi
+        if [ -f data_pipeline/requirements.txt ]; then pip install -r data_pipeline/requirements.txt; fi
+        pip install pytest  # Automated testing framework
+
+    # 5. Run a check to ensure Python code doesn't have major syntax errors
+    - name: Lint Code with Python Syntax Check
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        python -m compileall .
+
+    # 6. Run automated integration tests on API
+    - name: Run Tests with Pytest
+      working-directory: model_api
+      run: |
+        pytest test_app.py
+
