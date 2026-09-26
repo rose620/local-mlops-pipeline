@@ -72,6 +72,21 @@ docker run -p 8000:8000 wine-quality-api
 
 ---
 
+### 4. Verify Predictions with Client Scripts
+*While the Docker container is active in primary terminal window, open a **new terminal window or Anaconda/Jupyter Prompt** to hit the API using the included testing client:*
+
+```bash
+# Navigate to the API folder and activate your environment
+cd model_api
+conda activate mlops_env
+
+# Trigger the client script using the local payload file
+python predict.py
+```
+*(For Linux/macOS environments, alternatively initialize via the automation shell script: `./predict.sh`)*
+
+---
+
 ## 🔮 Sample API Request Payloads
 
 When the container or local server is active, the FastAPI endpoint listens for POST requests at `http://localhost:8000/predict`.
@@ -96,12 +111,15 @@ When the container or local server is active, the FastAPI endpoint listens for P
 ### Response Layout
 ```json
 {
-  "predicted_quality": 5.0
+  "predicted_quality": 5.1155
 }
 ```
 
 ---
 
+## 📂 Project Structure
+
+```text
 ## 📂 Project Structure
 
 ```text
@@ -116,7 +134,11 @@ local-mlops-pipeline/
 └── model_api/
     ├── app.py                # FastAPI Application
     ├── test_app.py           # Pytest integration suite
+    ├── predict.py            # Local Python request client
+    ├── predict.sh            # Automation Shell script to trigger client
+    ├── sample_payload.json   # Mock JSON data structure matching schema
     ├── Dockerfile            # Optimized python:3.11-slim container config
     ├── requirements.txt      # Explicitly pinned production dependencies
     └── wine_model.pkl        # Serialized model artifact
+
 ```
